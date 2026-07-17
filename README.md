@@ -1,6 +1,6 @@
 # K-Means Color Studio
 
-[![CI](https://github.com/SabahattinAkal/K-Means_Clustering_Uygulama/actions/workflows/ci.yml/badge.svg)](https://github.com/SabahattinAkal/K-Means_Clustering_Uygulama/actions/workflows/ci.yml)
+[![CI](https://github.com/SabahattinAkal/kmeans-color-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/SabahattinAkal/kmeans-color-studio/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB)
 ![OpenCV](https://img.shields.io/badge/OpenCV-K--Means-5C3EE8)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
