@@ -28,8 +28,8 @@ web = ["fastapi>=0.115,<1", "python-multipart>=0.0.9", "uvicorn[standard]>=0.30,
 kmeans-color-studio = "kmeans_color_studio.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/SabahattinAkal/K-Means_Clustering_Uygulama"
-Issues = "https://github.com/SabahattinAkal/K-Means_Clustering_Uygulama/issues"
+Homepage = "https://github.com/SabahattinAkal/kmeans-color-studio"
+Issues = "https://github.com/SabahattinAkal/kmeans-color-studio/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
