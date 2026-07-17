@@ -3,6 +3,7 @@
 [![CI](https://github.com/SabahattinAkal/K-Means_Clustering_Uygulama/actions/workflows/ci.yml/badge.svg)](https://github.com/SabahattinAkal/K-Means_Clustering_Uygulama/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB)
 ![OpenCV](https://img.shields.io/badge/OpenCV-K--Means-5C3EE8)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 **Erasmus AI Rebuild Series — Original 2022, rebuilt 2026**
 
@@ -32,6 +33,23 @@ kmeans-color-studio assets\demo\color-still-life-input.png `
 The six exported colors are `#CDBDA7`, `#BAA78F`, `#F2900D`, `#C83721`, `#48355C`, and `#0D7EA4`. Inspect the committed [JSON palette](assets/demo/palette-k6.json), [CSS variables](assets/demo/palette-k6.css), [input](assets/demo/color-still-life-input.png), or [quantized output](assets/demo/quantized-k6.png).
 
 > The colorful still-life input is an original AI-generated generic test fixture. The palette, metrics, and processed images above are real outputs produced by this code with seed `42`.
+
+## Advanced: perceptual color and automatic K
+
+RGB distance is convenient but does not closely follow human color perception. Version 1.1 can cluster in OpenCV's CIELAB representation and test a bounded range of palette sizes. The selected elbow is the candidate with the maximum distance from the endpoint line of the normalized log-distortion curve.
+
+![Automatic CIELAB palette-size analysis](assets/demo/cluster-analysis-lab.svg)
+
+```powershell
+kmeans-color-studio assets\demo\color-still-life-input.png `
+  --colors auto `
+  --min-colors 2 `
+  --max-colors 8 `
+  --color-space lab `
+  --output output\advanced-demo
+```
+
+The committed run selected `K=4`, produced an RGB reconstruction MSE of `760.8320`, and wrote [the complete candidate report](assets/demo/cluster-analysis-lab.json), [the perceptual comparison](assets/demo/comparison-lab-auto.png), and [the selected palette](assets/demo/palette-lab-auto.json). Automatic selection is a reproducible heuristic, not a universal aesthetic decision; designers can still choose `K` explicitly.
 
 ## 2022 → 2026
 
@@ -94,6 +112,7 @@ The reported mean squared error measures color reconstruction loss; lower is clo
 ```text
 src/kmeans_color_studio/
 ├── core.py          # validation, sampling, K-Means, palette/export helpers
+├── analysis.py      # automatic K analysis and SVG/JSON reports
 ├── cli.py           # command-line interface
 └── __main__.py      # python -m entry point
 app/main.py          # FastAPI upload demo
@@ -102,6 +121,8 @@ assets/demo/         # committed input, output, palette, and comparison
 ```
 
 Large images are fitted on at most `--max-samples` pixels, but every source pixel is reassigned to the nearest learned center in bounded chunks. This keeps the result complete without allocating an unbounded pixel-by-cluster distance matrix.
+
+Public API users can call `quantize_image(..., color_space="lab")` or `analyze_cluster_range(...)` directly. CLI and API defaults remain RGB for backwards compatibility.
 
 ## Türkçe
 
@@ -114,3 +135,7 @@ Uygulama bir fotoğrafı seçilen sayıda baskın renge indirger; sonucu karşı
 - RGB Euclidean distance is not perfectly aligned with human color perception.
 - Very small palette sizes intentionally remove fine texture and gradients.
 - The web endpoint accepts files up to 20 MB and does not persist uploads.
+
+## Open-source use
+
+Released under the [MIT License](LICENSE). See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [CHANGELOG.md](CHANGELOG.md) before deployment or contribution.

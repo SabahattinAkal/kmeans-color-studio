@@ -1,0 +1,49 @@
+{
+  "colors": [
+    {
+      "rgb": [
+        191,
+        178,
+        155
+      ],
+      "hex": "#BFB29B",
+      "pixel_count": 1074901,
+      "fraction": 0.683555
+    },
+    {
+      "rgb": [
+        71,
+        74,
+        118
+      ],
+      "hex": "#474A76",
+      "pixel_count": 202955,
+      "fraction": 0.129064
+    },
+    {
+      "rgb": [
+        244,
+        146,
+        19
+      ],
+      "hex": "#F49213",
+      "pixel_count": 160167,
+      "fraction": 0.101854
+    },
+    {
+      "rgb": [
+        198,
+        61,
+        36
+      ],
+      "hex": "#C63D24",
+      "pixel_count": 134493,
+      "fraction": 0.085527
+    }
+  ],
+  "clusters": 4,
+  "color_space": "lab",
+  "mean_squared_error": 760.832,
+  "fit_distortion": 502.0857,
+  "elapsed_seconds": 0.213844
+}
