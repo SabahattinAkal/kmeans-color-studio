@@ -7,6 +7,7 @@ import numpy as np
 
 from kmeans_color_studio.analysis import analyze_cluster_range, render_elbow_svg
 from kmeans_color_studio.core import export_palette_css, export_palette_json, quantize_image
+from kmeans_color_studio.diagnostics import channel_histograms, grayscale_and_equalized, reduce_bit_depth
 
 
 class QuantizationTests(unittest.TestCase):
@@ -57,6 +58,17 @@ class QuantizationTests(unittest.TestCase):
             payload = json.loads(json_path.read_text(encoding="utf-8"))
             self.assertEqual(len(payload["colors"]), 3)
             self.assertIn("--dominant-color-1", css_path.read_text(encoding="utf-8"))
+
+    def test_classical_image_diagnostics(self) -> None:
+        histograms = channel_histograms(self.image)
+        self.assertEqual(histograms.shape, (3, 256))
+        self.assertEqual(int(histograms[0].sum()), 24 * 24)
+        gray, equalized = grayscale_and_equalized(self.image)
+        self.assertEqual(gray.shape, (24, 24))
+        self.assertEqual(equalized.shape, gray.shape)
+        reduced = reduce_bit_depth(self.image, bits_per_channel=2)
+        self.assertEqual(reduced.shape, self.image.shape)
+        self.assertTrue(set(np.unique(reduced)).issubset({0, 85, 170, 255}))
 
 
 if __name__ == "__main__":

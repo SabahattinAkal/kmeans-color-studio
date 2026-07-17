@@ -51,6 +51,32 @@ kmeans-color-studio assets\demo\color-still-life-input.png `
 
 The committed run selected `K=4`, produced an RGB reconstruction MSE of `760.8320`, and wrote [the complete candidate report](assets/demo/cluster-analysis-lab.json), [the perceptual comparison](assets/demo/comparison-lab-auto.png), and [the selected palette](assets/demo/palette-lab-auto.json). Automatic selection is a reproducible heuristic, not a universal aesthetic decision; designers can still choose `K` explicitly.
 
+## Classical image diagnostics
+
+Version 1.2 consolidates the useful concepts from my historical RGB-channel,
+histogram, grayscale, histogram-equalization, and bit-depth exercises. The new
+implementation corrects the original conceptual mistakes: grayscale uses a
+luminance conversion rather than the blue channel, and “2 bit” explicitly
+means two bits **per channel** (four levels per R/G/B channel).
+
+![Original and two-bit-per-channel comparison](assets/demo/classical-diagnostics/bit-depth-comparison.png)
+
+![RGB channel histograms](assets/demo/classical-diagnostics/rgb-histograms.svg)
+
+```powershell
+kmeans-color-studio assets\demo\color-still-life-input.png `
+  --colors 6 `
+  --diagnostics `
+  --bits-per-channel 2 `
+  --output output\diagnostics-demo
+```
+
+The diagnostics directory contains RGB channel views, a true grayscale image,
+histogram-equalized grayscale, a bit-depth comparison, an SVG histogram, and a
+JSON report with channel statistics, contrast, entropy, and unique-color count.
+The project intentionally uses the committed redistribution-safe fixture rather
+than the historically common Lena image.
+
 ## 2022 → 2026
 
 | Original exercise | Rebuilt project |
@@ -61,6 +87,7 @@ The committed run selected `K=4`, produced an RGB reconstruction MSE of `760.832
 | Screen-only result | PNG comparison + JSON and CSS exports |
 | No validation or tests | Input validation, unit tests and CI |
 | One script | Installable package, web API and Docker image |
+| Incorrect grayscale/bit-depth snippets | Tested luminance, equalization, RGB histogram, and per-channel bit depth |
 
 ## Quick start
 
@@ -77,6 +104,7 @@ Generated files:
 - `comparison.png`
 - `palette.json`
 - `palette.css`
+- optional `diagnostics/` visual and JSON artifacts
 
 You can run the command immediately with the committed demo input; no external image download is required.
 
@@ -113,6 +141,7 @@ The reported mean squared error measures color reconstruction loss; lower is clo
 src/kmeans_color_studio/
 ├── core.py          # validation, sampling, K-Means, palette/export helpers
 ├── analysis.py      # automatic K analysis and SVG/JSON reports
+├── diagnostics.py   # RGB, grayscale, equalization, histogram, bit depth
 ├── cli.py           # command-line interface
 └── __main__.py      # python -m entry point
 app/main.py          # FastAPI upload demo

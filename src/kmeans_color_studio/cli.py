@@ -15,6 +15,7 @@ from .core import (
     quantize_image,
     save_rgb,
 )
+from .diagnostics import export_diagnostics
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -30,6 +31,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", "-o", type=Path, default=Path("output"))
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max-samples", type=int, default=100_000)
+    parser.add_argument("--diagnostics", action="store_true", help="export RGB, histogram, grayscale, equalization, and bit-depth diagnostics")
+    parser.add_argument("--bits-per-channel", type=int, default=2, help="bit-depth preview used with --diagnostics")
     return parser
 
 
@@ -66,6 +69,7 @@ def main(argv: list[str] | None = None) -> int:
     if analysis is not None:
         save_analysis_json(args.output / "cluster_analysis.json", analysis)
         render_elbow_svg(args.output / "cluster_analysis.svg", analysis)
+    diagnostics = export_diagnostics(args.output / "diagnostics", original, bits_per_channel=args.bits_per_channel) if args.diagnostics else None
     report = {
         "input": str(args.image),
         "output": str(args.output),
@@ -75,6 +79,7 @@ def main(argv: list[str] | None = None) -> int:
         "mean_squared_error": round(result.mean_squared_error, 4),
         "fit_distortion": round(result.fit_distortion, 4),
         "elapsed_seconds": round(result.elapsed_seconds, 4),
+        "diagnostics": diagnostics,
     }
     print(json.dumps(report, indent=2))
     return 0

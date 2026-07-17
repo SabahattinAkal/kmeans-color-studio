@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0 — 2026-07-17
+
+- Consolidated the useful parts of seven historical Lena exercises into tested diagnostics.
+- Added true grayscale conversion, histogram equalization, RGB channel histograms, and bit-depth reduction.
+- Added `--diagnostics` artifacts with redistribution-safe input images.
+
 ## 1.1.0 — 2026-07-17
 
 - Added CIELAB quantization for perceptually improved clustering.

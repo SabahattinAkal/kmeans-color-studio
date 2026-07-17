@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kmeans-color-studio"
-version = "1.1.0"
-description = "Deterministic image color quantization and palette extraction with OpenCV K-Means"
+version = "1.2.0"
+description = "Deterministic color quantization, palette extraction, and classical image diagnostics"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}

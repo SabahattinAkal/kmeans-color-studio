@@ -1,0 +1,24 @@
+{
+  "shape": [
+    640,
+    640,
+    3
+  ],
+  "channel_mean_rgb": [
+    176.9158,
+    150.5511,
+    126.0183
+  ],
+  "channel_std_rgb": [
+    63.1898,
+    49.049,
+    56.0629
+  ],
+  "grayscale_entropy_bits": 6.769205,
+  "equalized_entropy_bits": 6.537034,
+  "grayscale_std": 43.81352,
+  "equalized_std": 74.224454,
+  "bits_per_channel": 2,
+  "levels_per_channel": 4,
+  "unique_reduced_colors": 32
+}
