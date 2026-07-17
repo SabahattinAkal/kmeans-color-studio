@@ -1,0 +1,66 @@
+{
+  "colors": [
+    {
+      "rgb": [
+        205,
+        189,
+        167
+      ],
+      "hex": "#CDBDA7",
+      "pixel_count": 528752,
+      "fraction": 0.336246
+    },
+    {
+      "rgb": [
+        186,
+        167,
+        143
+      ],
+      "hex": "#BAA78F",
+      "pixel_count": 508613,
+      "fraction": 0.323439
+    },
+    {
+      "rgb": [
+        242,
+        144,
+        13
+      ],
+      "hex": "#F2900D",
+      "pixel_count": 161653,
+      "fraction": 0.102799
+    },
+    {
+      "rgb": [
+        200,
+        55,
+        33
+      ],
+      "hex": "#C83721",
+      "pixel_count": 127671,
+      "fraction": 0.081189
+    },
+    {
+      "rgb": [
+        72,
+        53,
+        92
+      ],
+      "hex": "#48355C",
+      "pixel_count": 127466,
+      "fraction": 0.081059
+    },
+    {
+      "rgb": [
+        13,
+        126,
+        164
+      ],
+      "hex": "#0D7EA4",
+      "pixel_count": 118361,
+      "fraction": 0.075269
+    }
+  ],
+  "mean_squared_error": 895.9704,
+  "elapsed_seconds": 0.259136
+}
