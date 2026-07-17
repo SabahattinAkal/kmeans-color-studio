@@ -1,0 +1,49 @@
+{
+  "selected_clusters": 4,
+  "color_space": "lab",
+  "selection_method": "maximum distance from the log-distortion endpoint line",
+  "candidates": [
+    {
+      "clusters": 2,
+      "rgb_mse": 1994.256104,
+      "fit_distortion": 1281.820843,
+      "elapsed_seconds": 0.096745
+    },
+    {
+      "clusters": 3,
+      "rgb_mse": 928.831665,
+      "fit_distortion": 685.744462,
+      "elapsed_seconds": 0.023758
+    },
+    {
+      "clusters": 4,
+      "rgb_mse": 734.872498,
+      "fit_distortion": 492.389488,
+      "elapsed_seconds": 0.026495
+    },
+    {
+      "clusters": 5,
+      "rgb_mse": 528.734253,
+      "fit_distortion": 392.48605,
+      "elapsed_seconds": 0.04228
+    },
+    {
+      "clusters": 6,
+      "rgb_mse": 500.994568,
+      "fit_distortion": 336.514184,
+      "elapsed_seconds": 0.046526
+    },
+    {
+      "clusters": 7,
+      "rgb_mse": 336.181183,
+      "fit_distortion": 253.427111,
+      "elapsed_seconds": 0.041679
+    },
+    {
+      "clusters": 8,
+      "rgb_mse": 303.447235,
+      "fit_distortion": 210.762538,
+      "elapsed_seconds": 0.043107
+    }
+  ]
+}

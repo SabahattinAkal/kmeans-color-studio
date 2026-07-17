@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import json
 from pathlib import Path
 import time
+from typing import Literal
 
 import cv2
 import numpy as np
@@ -19,7 +20,9 @@ class QuantizationResult:
     palette: np.ndarray
     counts: np.ndarray
     mean_squared_error: float
+    fit_distortion: float
     elapsed_seconds: float
+    color_space: str
 
     @property
     def colors(self) -> list[dict[str, object]]:
@@ -36,6 +39,10 @@ class QuantizationResult:
                 }
             )
         return items
+
+    @property
+    def clusters(self) -> int:
+        return len(self.palette)
 
 
 def _validate_image(image: np.ndarray, clusters: int) -> np.ndarray:
@@ -61,6 +68,7 @@ def quantize_image(
     seed: int = 42,
     max_samples: int = 100_000,
     attempts: int = 5,
+    color_space: Literal["rgb", "lab"] = "rgb",
 ) -> QuantizationResult:
     """Reduce an RGB image to ``clusters`` colors.
 
@@ -70,13 +78,16 @@ def quantize_image(
     """
 
     image = _validate_image(image, clusters)
+    if color_space not in {"rgb", "lab"}:
+        raise ValueError("color_space must be 'rgb' or 'lab'")
     if max_samples < clusters:
         raise ValueError("max_samples must be at least the number of clusters")
     if attempts < 1:
         raise ValueError("attempts must be positive")
 
     started = time.perf_counter()
-    pixels = image.reshape(-1, 3).astype(np.float32)
+    working_image = cv2.cvtColor(image, cv2.COLOR_RGB2LAB) if color_space == "lab" else image
+    pixels = working_image.reshape(-1, 3).astype(np.float32)
     rng = np.random.default_rng(seed)
     if len(pixels) > max_samples:
         indices = rng.choice(len(pixels), size=max_samples, replace=False)
@@ -101,29 +112,38 @@ def quantize_image(
 
     # Assign in chunks to keep memory bounded for multi-megapixel images.
     labels = np.empty(len(pixels), dtype=np.int32)
-    error_sum = 0.0
+    fit_error_sum = 0.0
     chunk_size = 250_000
     for start in range(0, len(pixels), chunk_size):
         chunk = pixels[start : start + chunk_size]
         distances = np.sum((chunk[:, None, :] - centers[None, :, :]) ** 2, axis=2)
         chunk_labels = np.argmin(distances, axis=1)
         labels[start : start + len(chunk)] = chunk_labels
-        error_sum += float(distances[np.arange(len(chunk)), chunk_labels].sum())
+        fit_error_sum += float(distances[np.arange(len(chunk)), chunk_labels].sum())
 
     counts = np.bincount(labels, minlength=clusters)
     order = np.argsort(-counts, kind="stable")
     remap = np.empty(clusters, dtype=np.int32)
     remap[order] = np.arange(clusters)
     sorted_labels = remap[labels]
-    palette = np.clip(np.rint(centers[order]), 0, 255).astype(np.uint8)
-    quantized = palette[sorted_labels].reshape(image.shape)
+    working_palette = np.clip(np.rint(centers[order]), 0, 255).astype(np.uint8)
+    working_quantized = working_palette[sorted_labels].reshape(image.shape)
+    if color_space == "lab":
+        quantized = cv2.cvtColor(working_quantized, cv2.COLOR_LAB2RGB)
+        palette = cv2.cvtColor(working_palette[None, :, :], cv2.COLOR_LAB2RGB)[0]
+    else:
+        quantized = working_quantized
+        palette = working_palette
+    rgb_error = image.astype(np.float32) - quantized.astype(np.float32)
 
     return QuantizationResult(
         image=quantized,
         palette=palette,
         counts=counts[order].astype(np.int64),
-        mean_squared_error=error_sum / len(pixels),
+        mean_squared_error=float(np.mean(rgb_error**2)),
+        fit_distortion=fit_error_sum / len(pixels),
         elapsed_seconds=time.perf_counter() - started,
+        color_space=color_space,
     )
 
 
@@ -171,7 +191,10 @@ def export_palette_json(path: str | Path, result: QuantizationResult) -> Path:
     destination.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "colors": result.colors,
+        "clusters": result.clusters,
+        "color_space": result.color_space,
         "mean_squared_error": round(result.mean_squared_error, 4),
+        "fit_distortion": round(result.fit_distortion, 4),
         "elapsed_seconds": round(result.elapsed_seconds, 6),
     }
     destination.write_text(json.dumps(payload, indent=2), encoding="utf-8")

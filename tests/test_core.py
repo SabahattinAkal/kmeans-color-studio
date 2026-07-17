@@ -5,6 +5,7 @@ import unittest
 
 import numpy as np
 
+from kmeans_color_studio.analysis import analyze_cluster_range, render_elbow_svg
 from kmeans_color_studio.core import export_palette_css, export_palette_json, quantize_image
 
 
@@ -28,6 +29,21 @@ class QuantizationTests(unittest.TestCase):
         second = quantize_image(self.image, clusters=3, seed=42)
         np.testing.assert_array_equal(first.image, second.image)
         np.testing.assert_array_equal(first.palette, second.palette)
+
+    def test_lab_color_space_preserves_shape(self) -> None:
+        result = quantize_image(self.image, clusters=3, seed=42, color_space="lab")
+        self.assertEqual(result.image.shape, self.image.shape)
+        self.assertEqual(result.color_space, "lab")
+        self.assertEqual(result.clusters, 3)
+        self.assertTrue(np.isfinite(result.fit_distortion))
+
+    def test_automatic_cluster_analysis_and_svg(self) -> None:
+        analysis = analyze_cluster_range(self.image, minimum=2, maximum=5, seed=42)
+        self.assertIn(analysis.selected_clusters, range(2, 6))
+        self.assertEqual(len(analysis.candidates), 4)
+        with tempfile.TemporaryDirectory() as directory:
+            path = render_elbow_svg(Path(directory) / "elbow.svg", analysis)
+            self.assertIn("Automatic K analysis", path.read_text(encoding="utf-8"))
 
     def test_rejects_invalid_cluster_count(self) -> None:
         with self.assertRaises(ValueError):
